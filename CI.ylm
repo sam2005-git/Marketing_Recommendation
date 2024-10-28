@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      run: |
+        docker-compose build
+
+    - name: Run Docker Compose
+      run: |
+        docker-compose up -d
+
+    - name: Run Tests
+      run: |
+        docker-compose exec app pytest /app/tests/
+      
+    - name: Shut down Docker Compose
+      if: always()
+      run: |
+        docker-compose down
